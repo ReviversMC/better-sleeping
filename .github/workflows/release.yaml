@@ -23,7 +23,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Validate Gradle wrapper
-        uses: gradle/wrapper-validation-action@v1
+        uses: gradle/actions/wrapper-validation@v3
 
       - name: Build 1.17 project
         run: ./gradlew :bettersleeping-1.17:build --stacktrace
