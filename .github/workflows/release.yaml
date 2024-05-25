@@ -65,7 +65,7 @@ jobs:
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
           github-token: ${{ secrets.CLASSIC_GITHUB_TOKEN }}
           files: bettersleeping-1.19/build/libs/!(*-@(dev|sources)).jar
-          name: 0.6.1 for MC 1.19
+          name: 0.6.1 for MC 1.19 to 1.20.4
           version: 0.6.1+1.19
           version-type: release
           loaders: |
@@ -76,6 +76,11 @@ jobs:
             1.19.2
             1.19.3
             1.19.4
+            1.20
+            1.20.1
+            1.20.2
+            1.20.3
+            1.20.4
           dependencies: |
             fabric-api    | depends
             cloth-config  | depends

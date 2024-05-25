@@ -28,8 +28,7 @@
 		]
 	},
 	"depends": {
-		"fabricloader": ">=0.12.9",
-		"minecraft": ">=1.17",
+		"minecraft": ">=1.17- <1.19",
 		"bettersleeping-core": "*"
 	}
 }

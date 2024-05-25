@@ -1,5 +1,6 @@
 package com.github.reviversmc.bettersleeping.events;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -24,7 +25,9 @@ public class EventHandler119 extends EventHandlerBase {
 
 	@Override
 	protected ServerWorld getServerWorld(ServerPlayerEntity player) {
-		return player.getWorld();
+		// ServerPlayerEntity#getWorld() is method_14220, which doesn't exist in 1.20+.
+		// Entity#getWorld() is method_37908, which still exists in 1.20+.
+		return (ServerWorld) ((Entity) player).getWorld();
 	}
 
 	@Override
