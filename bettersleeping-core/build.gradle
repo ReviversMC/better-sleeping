@@ -1,5 +1,5 @@
 base {
-	archivesName = archivesName.get() + '-core'
+	archivesBaseName += '-core'
 }
 
 dependencies {

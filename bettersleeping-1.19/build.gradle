@@ -1,6 +1,4 @@
-base {
-	archivesName = archivesName.get() + '+1.19'
-}
+version += '+1.19'
 
 dependencies {
 	include implementation(project(path: ':bettersleeping-core', configuration: 'namedElements'))
