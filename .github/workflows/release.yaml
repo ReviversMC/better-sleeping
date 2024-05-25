@@ -38,7 +38,7 @@ jobs:
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           curseforge-id: 552358
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
-          github-token: ${{ secrets.CLASSIC_GITHUB_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           files: bettersleeping-1.17/build/libs/!(*-@(dev|sources)).jar
           name: 0.6.1 for MC 1.17 and 1.18
           version: 0.6.1+1.17
@@ -63,7 +63,7 @@ jobs:
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           curseforge-id: 552358
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
-          github-token: ${{ secrets.CLASSIC_GITHUB_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           files: bettersleeping-1.19/build/libs/!(*-@(dev|sources)).jar
           name: 0.6.1 for MC 1.19 to 1.20.4
           version: 0.6.1+1.19
