@@ -1,9 +1,6 @@
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
-
-
-version += '+1.19'
-
+base {
+	archivesName = archivesName.get() + '+1.19'
+}
 
 dependencies {
 	include implementation(project(path: ':bettersleeping-core', configuration: 'namedElements'))
@@ -15,10 +12,8 @@ dependencies {
 	modImplementation(fabricApi.module('fabric-api-base', project.fabric_api_version_1_19))
 	modImplementation(fabricApi.module('fabric-lifecycle-events-v1', project.fabric_api_version_1_19))
 
-	// ModMenu
+	// Other mods
 	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version_1_19}"
-
-	// Cloth Config
 	modImplementation("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version_1_19}") {
 		exclude(group: 'net.fabricmc.fabric-api')
 	}
@@ -31,7 +26,9 @@ dependencies {
 			}
 		}
 
+		// Use full Fabric API bundle while debugging, since transitive deps aren't always declared correctly
 		modRuntimeOnly "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version_1_19}"
+
 		modRuntimeOnly "maven.modrinth:lazydfu:${project.lazydfu_version_1_19}"
 		modRuntimeOnly "maven.modrinth:sodium:${project.sodium_version_1_19}"
 		runtimeOnly "org.joml:joml:${project.sodium_joml_version_1_19}"
@@ -44,8 +41,11 @@ dependencies {
 	}
 }
 
+java {
+	sourceCompatibility = JavaVersion.VERSION_17
+	targetCompatibility = JavaVersion.VERSION_17
+}
 
 tasks.withType(JavaCompile).configureEach {
-	// Minecraft 1.18-pre2 upwards uses Java 17.
 	it.options.release = 17
 }

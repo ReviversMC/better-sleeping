@@ -1,17 +1,17 @@
 plugins {
 	id 'fabric-loom' apply false
-	id 'io.github.juuxel.loom-quiltflower' apply false
 	id 'checkstyle'
+	id 'com.diffplug.spotless'
 }
 
 
-int width;
-int height;
+int width = 960;
+int height = 480;
 
 try {
 	java.awt.GraphicsDevice gd = java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-	width = Math.max(960, (int) (gd.getDisplayMode().getWidth() * 0.5));
-	height = Math.max(480, (int) (gd.getDisplayMode().getHeight() * 0.5));
+	width = Math.max(width, (int) (gd.getDisplayMode().getWidth() * 0.5));
+	height = Math.max(height, (int) (gd.getDisplayMode().getHeight() * 0.5));
 } catch (java.awt.HeadlessException e) {
 	// Ignore
 } catch (Throwable e) {
@@ -21,18 +21,30 @@ try {
 
 subprojects {
 	apply plugin: 'fabric-loom'
-	apply plugin: 'io.github.juuxel.loom-quiltflower'
 	apply plugin: 'checkstyle'
+	apply plugin: 'com.diffplug.spotless'
 
 	checkstyle {
 		configFile = rootProject.file('checkstyle.xml')
 		toolVersion = project.checkstyle_version
 	}
 
+	spotless {
+		java {
+			removeUnusedImports()
+			importOrder('java', 'javax', '', 'net.minecraft', 'com.github.reviversmc')
+			indentWithTabs()
+			trimTrailingWhitespace()
+		}
+	}
+
 
 	version = rootProject.mod_version
 	group = rootProject.maven_group
-	archivesBaseName = rootProject.archives_base_name
+
+	base {
+		archivesName = project.archives_base_name
+	}
 
 
 	configurations {
@@ -65,14 +77,6 @@ subprojects {
 		}
 		maven {
 			url = 'https://maven.shedaniel.me/'
-		}
-		maven {
-			name = 'JitPack'
-			url = 'https://jitpack.io'
-		}
-		maven {
-			name = 'NucleoidMC'
-			url = 'https://maven.nucleoid.xyz/'
 		}
 		mavenCentral()
 	}
