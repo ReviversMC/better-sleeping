@@ -61,7 +61,7 @@ public class BetterSleepingConfig implements ConfigData {
 				+ "§7   to skip the night")
 		public String notEnoughPlayersAsleepMessage = "{asleepPlayers}/{totalPlayers} ({asleepPercentage}%) players are now sleeping. {asleepPlayersAdditionallyNeeded} more required to skip the night!";
 
-		@Comment("List of formatting codes. See here: https://minecraft.fandom.com/wiki/Formatting_codes")
+		@Comment("List of formatting codes. See here: https://minecraft.wiki/w/Formatting_codes")
 		public List<String> messageFormatting = new ArrayList<>(Arrays.asList("gold"));
 	}
 
