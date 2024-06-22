@@ -1,7 +1,8 @@
 version += '+1.19'
 
 dependencies {
-	include implementation(project(path: ':bettersleeping-core', configuration: 'namedElements'))
+	implementation project(path: ':bettersleeping-core', configuration: 'namedElements')
+	include project(path: ':bettersleeping-core')
 
 	minecraft "com.mojang:minecraft:${project.minecraft_version_1_19}"
 	mappings "net.fabricmc:yarn:${project.yarn_mappings_1_19}:v2"
