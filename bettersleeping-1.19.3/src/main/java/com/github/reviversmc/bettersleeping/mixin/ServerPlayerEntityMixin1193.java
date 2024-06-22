@@ -11,22 +11,22 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import com.github.reviversmc.bettersleeping.BetterSleeping117;
+import com.github.reviversmc.bettersleeping.BetterSleeping1193;
 
 @Mixin(ServerPlayerEntity.class)
-public abstract class ServerPlayerEntityMixin117 extends PlayerEntity {
-	public ServerPlayerEntityMixin117(World world, BlockPos pos, float yaw, GameProfile profile) {
+public abstract class ServerPlayerEntityMixin1193 extends PlayerEntity {
+	public ServerPlayerEntityMixin1193(World world, BlockPos pos, float yaw, GameProfile profile) {
 		super(world, pos, yaw, profile);
 	}
 
 	@Inject(method = "sleep", at = @At("TAIL"))
 	public void onSleep(BlockPos position, CallbackInfo callbackInfo) {
-		BetterSleeping117.eventHandler.onSleep(cast(this));
+		BetterSleeping1193.eventHandler.onSleep(cast(this));
 	}
 
 	@Inject(method = "wakeUp", at = @At("RETURN"))
-	private void onWakeUp(boolean bl, boolean updateSleepingPlayers, CallbackInfo callbackInfo) {
-		BetterSleeping117.eventHandler.onWakeUp(cast(this));
+	private void onWakeUp(boolean skipSleepTimer, boolean updateSleepingPlayers, CallbackInfo callbackInfo) {
+		BetterSleeping1193.eventHandler.onWakeUp(cast(this));
 	}
 
 	private ServerPlayerEntity cast(PlayerEntity player) {

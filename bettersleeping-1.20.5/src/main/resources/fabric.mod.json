@@ -21,14 +21,14 @@
 	],
 	"entrypoints": {
 		"main": [
-			"com.github.reviversmc.bettersleeping.BetterSleeping119"
+			"com.github.reviversmc.bettersleeping.BetterSleeping1205"
 		],
 		"modmenu": [
 			"com.github.reviversmc.bettersleeping.client.ModMenuIntegration"
 		]
 	},
 	"depends": {
-		"minecraft": ">=1.19- <1.19.3",
+		"minecraft": ">=1.20.5- <1.21",
 		"bettersleeping-core": "*"
 	}
 }

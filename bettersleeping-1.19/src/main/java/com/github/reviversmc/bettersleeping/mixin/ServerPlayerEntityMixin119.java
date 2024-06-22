@@ -22,11 +22,15 @@ public abstract class ServerPlayerEntityMixin119 extends PlayerEntity {
 
 	@Inject(method = "sleep", at = @At("TAIL"))
 	public void onSleep(BlockPos position, CallbackInfo callbackInfo) {
-		BetterSleeping119.eventHandler.onSleep(this);
+		BetterSleeping119.eventHandler.onSleep(cast(this));
 	}
 
 	@Inject(method = "wakeUp", at = @At("RETURN"))
 	private void onWakeUp(boolean skipSleepTimer, boolean updateSleepingPlayers, CallbackInfo callbackInfo) {
-		BetterSleeping119.eventHandler.onWakeUp(this);
+		BetterSleeping119.eventHandler.onWakeUp(cast(this));
+	}
+
+	private ServerPlayerEntity cast(PlayerEntity player) {
+		return (ServerPlayerEntity) player;
 	}
 }

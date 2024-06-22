@@ -9,25 +9,26 @@ import org.apache.commons.text.StringSubstitutor;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.stat.Stats;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.GameRules;
-import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 
 import com.github.reviversmc.bettersleeping.BetterSleeping;
-import com.github.reviversmc.bettersleeping.config.BetterSleepingConfig.Debuffs.Debuff;
-import com.github.reviversmc.bettersleeping.config.BetterSleepingConfig.Debuffs.LeveledDebuff;
+import com.github.reviversmc.bettersleeping.config.BuffConfig.Buff;
+import com.github.reviversmc.bettersleeping.config.DebuffConfig.Debuff;
 
 public abstract class EventHandlerBase {
-	protected abstract void sendPlayerMessage(PlayerEntity player, String message);
-	protected abstract ServerWorld getServerWorld(ServerPlayerEntity player);
+	protected abstract void sendPlayerMessage(ServerPlayerEntity player, String message);
 	protected abstract boolean isBedWorking(DimensionType dimension);
+	protected abstract ServerWorld getServerWorld(ServerPlayerEntity player);
+	protected abstract List<StatusEffect> getHarmfulEffects();
+	protected abstract List<StatusEffect> getBeneficialEffects();
+	protected abstract StatusEffectInstance newStatusEffectInstance(String id, int duration, int amplifier);
+	protected abstract void removeStatusEffect(ServerPlayerEntity player, String id);
 
 	public void onTick(MinecraftServer server) {
 		if (!BetterSleeping.config.buffs.applySleepBuffs) {
@@ -73,39 +74,22 @@ public abstract class EventHandlerBase {
 		}
 	}
 
-	// TODO: Remove this enum and make debuffs dynamic (user-addable)
-	private enum DebuffWithId {
-		SLOWNESS(BetterSleeping.config.debuffs.slowness, StatusEffects.SLOWNESS),
-		WEAKNESS(BetterSleeping.config.debuffs.weakness, StatusEffects.WEAKNESS),
-		NAUSEA(BetterSleeping.config.debuffs.nausea, StatusEffects.NAUSEA),
-		MINING_FATIGUE(BetterSleeping.config.debuffs.miningFatigue, StatusEffects.MINING_FATIGUE),
-		BLINDNESS(BetterSleeping.config.debuffs.blindness, StatusEffects.BLINDNESS);
-
-		public final Debuff config;
-		public final StatusEffect id;
-
-		DebuffWithId(Debuff debuff, StatusEffect id) {
-			this.config = debuff;
-			this.id = id;
-		}
-	}
-
 	private void applyDebuffs(ServerPlayerEntity player, int nightsAwake) {
 		boolean debuffsApplied = false;
 		int nightsAwakeToPunish;
 
-		for (DebuffWithId debuff : DebuffWithId.values()) {
-			nightsAwakeToPunish = nightsAwake - debuff.config.allowedAwakeNightsBeforeActivating();
+		for (Debuff debuff : BetterSleeping.config.debuffs.debuffs) {
+			nightsAwakeToPunish = nightsAwake - debuff.allowedAwakeNightsBeforeActivating;
 
 			if (nightsAwakeToPunish >= 1) {
 				debuffsApplied = true;
 
 				int duration = Math.min(
-						debuff.config.maxDuration() * 20, // We want seconds here, not ticks
+						debuff.maxDuration * 20, // We want seconds here, not ticks
 						Math.round(Math.round(
-							debuff.config.baseDuration() * 20
+							debuff.baseDuration * 20
 							* Math.pow(
-								debuff.config.durationAmplifier(),
+								debuff.durationAmplifier,
 								nightsAwakeToPunish - 1
 							)
 						))
@@ -113,19 +97,21 @@ public abstract class EventHandlerBase {
 
 				int additionalEffectLevels = 0;
 
-				if (debuff.config instanceof LeveledDebuff) {
+				if (debuff instanceof Debuff) {
+					Debuff leveledDebuff = (Debuff) debuff;
+
 					additionalEffectLevels = Math.min(
 						// Max allowed level for this debuff
-						((LeveledDebuff) debuff.config).maxLevel,
+						leveledDebuff.maxLevel,
 						// Desired effect level according to formula
 						Math.round(Math.round(Math.pow(
-							((LeveledDebuff) debuff.config).levelAmplifier,
+							leveledDebuff.levelAmplifier,
 							nightsAwakeToPunish - 1
 						)))
 					) - 1;
 				}
 
-				player.addStatusEffect(new StatusEffectInstance(debuff.id, duration, additionalEffectLevels));
+				player.addStatusEffect(newStatusEffectInstance(debuff.id, duration, additionalEffectLevels));
 			}
 		}
 
@@ -139,42 +125,33 @@ public abstract class EventHandlerBase {
 		sendPlayerMessage(player, debuffMessage);
 	}
 
-	public void onSleep(PlayerEntity player) {
-		if (!(player instanceof ServerPlayerEntity)) {
-			return;
-		}
-
+	public void onSleep(ServerPlayerEntity player) {
 		// Send asleep message to every player
-		sendAsleepMessage(player.getEntityWorld());
+		sendAsleepMessage(getServerWorld(player));
 	}
 
-	public void onWakeUp(PlayerEntity player) {
-		if (!(player instanceof ServerPlayerEntity)) {
-			return;
-		}
+	public void onWakeUp(ServerPlayerEntity player) {
+		ServerWorld world = getServerWorld(player);
 
-		if (player.getEntityWorld().getTimeOfDay() % 24000 != 0) {
+		if (world.getTimeOfDay() % 24000 != 0) {
 			// Player has aborted the sleeping process, since it's not yet morning
 			// Resend asleep message to every player
-			sendAsleepMessage(player.getEntityWorld());
+			sendAsleepMessage(world);
 			return;
 		}
 
 		// Remove debuffs
 		if (BetterSleeping.config.debuffs.applyAwakeDebuffs) {
-			player.removeStatusEffect(StatusEffects.NAUSEA);
-			player.removeStatusEffect(StatusEffects.SLOWNESS);
-			player.removeStatusEffect(StatusEffects.WEAKNESS);
-			player.removeStatusEffect(StatusEffects.MINING_FATIGUE);
-			player.removeStatusEffect(StatusEffects.BLINDNESS);
+			for (Debuff debuff : BetterSleeping.config.debuffs.debuffs) {
+				removeStatusEffect(player, debuff.id);
+			}
 		}
 
 		// Apply buffs
 		if (BetterSleeping.config.buffs.applySleepBuffs) {
-			player.addStatusEffect(new StatusEffectInstance(
-					StatusEffects.REGENERATION,
-					BetterSleeping.config.buffs.regenerationDuration * 20,
-					BetterSleeping.config.buffs.regenerationLevel - 1));
+			for (Buff buff : BetterSleeping.config.buffs.buffs) {
+				player.addStatusEffect(newStatusEffectInstance(buff.id, buff.duration * 20, buff.level - 1));
+			}
 		}
 
 		if (!BetterSleeping.config.messages.sendNightSkippedMessageToEveryone) {
@@ -182,8 +159,8 @@ public abstract class EventHandlerBase {
 		}
 	}
 
-	private void sendAsleepMessage(World world) {
-		List<? extends PlayerEntity> players = world.getPlayers();
+	private void sendAsleepMessage(ServerWorld world) {
+		List<ServerPlayerEntity> players = world.getPlayers();
 		int sleepingPlayerCount = (int) players.stream().filter(LivingEntity::isSleeping).count();
 
 		if (players.size() <= 1) {
