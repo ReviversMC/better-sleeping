@@ -1,17 +1,25 @@
 package com.github.reviversmc.bettersleeping;
 
-import net.fabricmc.api.ModInitializer;
+import java.util.function.Supplier;
+
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 
+import com.github.reviversmc.bettersleeping.compat.minecraft.McVersionCompatInitializer;
+import com.github.reviversmc.bettersleeping.compat.minecraft.McVersionHelper;
 import com.github.reviversmc.bettersleeping.events.EventHandler1193;
 
-public class BetterSleeping1193 implements ModInitializer {
-	public static EventHandler1193 eventHandler;
+public class BetterSleeping1193 extends McVersionCompatInitializer {
+	static final Supplier<Boolean> IS_COMPATIBLE = () -> McVersionHelper.isWithin("1.19.3", "1.20.4");
 
 	@Override
-	public void onInitialize() {
-		eventHandler = new EventHandler1193();
+	public boolean isCompatible() {
+		return IS_COMPATIBLE.get();
+	}
 
-		ServerTickEvents.END_SERVER_TICK.register(eventHandler::onTick);
+	@Override
+	public void initialize() {
+		BetterSleeping.eventHandler = new EventHandler1193();
+
+		ServerTickEvents.END_SERVER_TICK.register(BetterSleeping.eventHandler::onTick);
 	}
 }

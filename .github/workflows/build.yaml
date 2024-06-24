@@ -22,25 +22,15 @@ jobs:
       - name: Validate Gradle wrapper
         uses: gradle/actions/wrapper-validation@v3
 
-      - name: Build 1.17 project
-        run: ./gradlew :bettersleeping-1.17:build --stacktrace
-
-      - name: Build 1.19 project
-        run: ./gradlew :bettersleeping-1.19:build --stacktrace
-
-      - name: Build 1.19.3 project
-        run: ./gradlew :bettersleeping-1.19.3:build --stacktrace
-
-      - name: Build 1.20.5 project
-        run: ./gradlew :bettersleeping-1.20.5:build --stacktrace
+      - name: Build mod
+        run: ./gradlew build --stacktrace
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
           path: |
-            **/build/libs
-            !bettersleeping-core/
+            build/libs/
       - name: Cleanup Gradle Cache
         run: |
           rm -f ~/.gradle/caches/modules-2/modules-2.lock

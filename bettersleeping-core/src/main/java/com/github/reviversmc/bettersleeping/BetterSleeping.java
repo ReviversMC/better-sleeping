@@ -1,37 +1,29 @@
 package com.github.reviversmc.bettersleeping;
 
-import me.shedaniel.autoconfig.AutoConfig;
-import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
 import net.fabricmc.api.ModInitializer;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import net.fabricmc.loader.api.FabricLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.github.reviversmc.bettersleeping.compat.minecraft.McVersionCompatInvoker;
+import com.github.reviversmc.bettersleeping.compat.mods.ClothConfigCompat;
 import com.github.reviversmc.bettersleeping.config.BetterSleepingConfig;
+import com.github.reviversmc.bettersleeping.events.EventHandlerBase;
 
 public class BetterSleeping implements ModInitializer {
+	public static final Logger LOGGER = LoggerFactory.getLogger("BetterSleeping");
 	public static final String NAMESPACE = "bettersleeping";
-	public static final String LOGGER_NAME = "BetterSleeping";
 	public static BetterSleepingConfig config;
-
-	private static Logger getLogger() {
-		return LogManager.getLogger(LOGGER_NAME);
-	}
-
-	public static void logWarn(String name) {
-		getLogger().warn(name);
-	}
-
-	public static void logWarn(String name, String msg) {
-		getLogger().warn(String.format("%s: %s", name, msg));
-	}
-
-	public static void logInfo(String info) {
-		getLogger().info(info);
-	}
+	public static EventHandlerBase eventHandler;
 
 	@Override
 	public void onInitialize() {
-		AutoConfig.register(BetterSleepingConfig.class, Toml4jConfigSerializer::new);
-		config = AutoConfig.getConfigHolder(BetterSleepingConfig.class).getConfig();
+		McVersionCompatInvoker.run();
+
+		if (FabricLoader.getInstance().isModLoaded("cloth-config2")) {
+			config = ClothConfigCompat.loadConfig();
+		} else {
+			config = new BetterSleepingConfig();
+		}
 	}
 }

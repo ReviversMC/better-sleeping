@@ -4,15 +4,6 @@
 	"version": "${version}",
 	"name": "BetterSleeping Core",
 	"description": "Cross Minecraft version compatible components of BetterSleeping",
-	"authors": [
-		"NebelNidas",
-		"TacoMonkey",
-		"ExtraCrafTX"
-	],
-	"contact": {
-		"homepage": "https://github.com/ReviversMC/bettersleeping",
-		"issues": "https://github.com/ReviversMC/bettersleeping/issues"
-	},
 	"license": "CC-BY-NC-SA-4.0",
 	"environment": "*",
 	"entrypoints": {
@@ -22,11 +13,7 @@
 	},
 	"depends": {
 		"fabric-lifecycle-events-v1": "*",
-		"cloth-config2": ">=5.3.63",
 		"minecraft": ">=1.17"
-	},
-	"recommends": {
-		"modmenu": "*"
 	},
 	"custom": {
 		"modmenu": {

@@ -1,0 +1,25 @@
+{
+	"schemaVersion": 1,
+	"id": "bettersleeping-dev-env-extras",
+	"version": "${version}",
+	"name": "microDurability Dev-Env Extras",
+	"license": "CC-BY-NC-SA-4.0",
+	"environment": "client",
+	"entrypoints": {
+		"mm:early_risers": [
+			"com.github.reviversmc.bettersleeping.compat.mods.ClothConfigCompatTransformer"
+		]
+	},
+	"depends": {
+		"fabricloader": ">=0.12.9",
+		"mm": ">=2.3"
+	},
+	"custom": {
+		"modmenu": {
+			"badges": ["library"],
+			"parent": {
+				"id": "bettersleeping"
+			}
+		}
+	}
+}

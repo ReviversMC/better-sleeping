@@ -1,10 +1,8 @@
 {
 	"required": true,
 	"package": "com.github.reviversmc.bettersleeping.mixin",
-	"compatibilityLevel": "JAVA_21",
-	"mixins": [
-		"ServerPlayerEntityMixin1205"
-	],
+	"compatibilityLevel": "JAVA_17",
+	"plugin": "com.github.reviversmc.bettersleeping.MixinProvider1193",
 	"injectors": {
 		"defaultRequire": 1
 	}

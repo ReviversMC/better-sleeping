@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' apply false
+	id 'fabric-loom'
 	id 'checkstyle'
 	id 'com.diffplug.spotless'
 }
@@ -19,7 +19,7 @@ try {
 }
 
 
-subprojects {
+allprojects {
 	apply plugin: 'fabric-loom'
 	apply plugin: 'checkstyle'
 	apply plugin: 'com.diffplug.spotless'
@@ -51,7 +51,6 @@ subprojects {
 		modRuntimeOnly {
 			transitive = true
 			exclude module: 'fabric-loader'
-			exclude module: 'fabric-api-base'
 		}
 	}
 
@@ -78,11 +77,21 @@ subprojects {
 		maven {
 			url = 'https://maven.shedaniel.me/'
 		}
+		maven {
+			url 'https://jitpack.io/'
+		}
 		mavenCentral()
 	}
 
 	dependencies {
 		modImplementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
+
+		if (project.name != 'bettersleeping'
+				&& project.name != 'bettersleeping-core'
+				&& project.name != 'bettersleeping-dev-env-extras') {
+			runtimeOnly project(path: ':bettersleeping-dev-env-extras', configuration: 'namedElements')
+			modRuntimeOnly "com.github.Chocohead:Fabric-ASM:${project.fabric_asm_version}"
+		}
 	}
 
 	loom {
@@ -126,11 +135,49 @@ subprojects {
 
 	jar {
 		from rootProject.file('LICENSE')
+	}
 
-		if (project.name != 'bettersleeping-core') {
-			into "assets/${project.archivesBaseName}", {
-				from rootProject.file('assets/icon.png')
-			}
+	build.doFirst {
+		use_third_party_mods = 'false'
+	}
+}
+
+subprojects {
+	configurations {
+		modRuntimeOnly {
+			exclude module: 'fabric-api-base'
 		}
 	}
 }
+
+
+dependencies {
+	include project(path: ':bettersleeping-core')
+	include project(path: ':bettersleeping-1.17')
+	include project(path: ':bettersleeping-1.19')
+	include project(path: ':bettersleeping-1.19.3')
+	include project(path: ':bettersleeping-1.20.5')
+
+	runtimeOnly project(path: ':bettersleeping-core', configuration: "namedElements")
+	runtimeOnly project(path: ':bettersleeping-1.17', configuration: "namedElements")
+	runtimeOnly project(path: ':bettersleeping-1.19', configuration: "namedElements")
+	runtimeOnly project(path: ':bettersleeping-1.19.3', configuration: "namedElements")
+	runtimeOnly project(path: ':bettersleeping-1.20.5', configuration: "namedElements")
+
+	modRuntimeOnly "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version_1_20_5}"
+	modRuntimeOnly "com.terraformersmc:modmenu:${project.modmenu_version_1_20_5}"
+	modRuntimeOnly("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version_1_20_5}") {
+		exclude(group: 'net.fabricmc.fabric-api')
+	}
+
+	minecraft "com.mojang:minecraft:${minecraft_version_1_20_5}"
+	mappings "net.fabricmc:yarn:${project.yarn_mappings_1_20_5}:v2"
+}
+
+
+processResources {
+	from("${rootDir}/assets/icon.png") {
+		into 'assets/bettersleeping/'
+	}
+}
+

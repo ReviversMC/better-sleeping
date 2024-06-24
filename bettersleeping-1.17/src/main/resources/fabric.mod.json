@@ -1,34 +1,32 @@
 {
 	"schemaVersion": 1,
-	"id": "bettersleeping",
+	"id": "bettersleeping-compat-1-17",
 	"version": "${version}",
-	"name": "BetterSleeping",
-	"description": "This mod adds sleep notifications, gives sleeping players buffs and debuffs to the ones who haven't slept in a long time!",
-	"authors": [
-		"NebelNidas",
-		"TacoMonkey",
-		"ExtraCrafTX"
-	],
-	"contact": {
-		"homepage": "https://github.com/ReviversMC/bettersleeping",
-		"issues": "https://github.com/ReviversMC/bettersleeping/issues"
-	},
-	"icon": "assets/bettersleeping/icon.png",
+	"name": "BetterSleeping 1.17 Compat",
 	"license": "CC-BY-NC-SA-4.0",
 	"environment": "*",
-	"mixins": [
-		"bettersleeping.mixins.json"
-	],
 	"entrypoints": {
-		"main": [
+		"bettersleeping": [
 			"com.github.reviversmc.bettersleeping.BetterSleeping117"
 		],
 		"modmenu": [
-			"com.github.reviversmc.bettersleeping.client.ModMenuIntegration"
+			"com.github.reviversmc.bettersleeping.compat.mods.ModMenuIntegration"
 		]
 	},
+	"mixins": [
+		"bettersleeping117.mixins.json"
+	],
 	"depends": {
-		"minecraft": ">=1.17- <1.19",
+		"fabricloader": ">=0.12.9",
+		"minecraft": ">=1.17",
 		"bettersleeping-core": "*"
+	},
+	"custom": {
+		"modmenu": {
+			"badges": ["library"],
+			"parent": {
+				"id": "bettersleeping"
+			}
+		}
 	}
 }
